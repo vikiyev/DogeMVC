@@ -81,3 +81,28 @@ class Core {
   }
 }
 ```
+
+## Loading the Controller
+
+To load the controller, we can check if the controller file exists and if it does, instantiate it.
+
+```php
+  public function __construct(){
+    // print_r($this->getURL());
+    $url = $this->getURL();
+
+    // look in controllers for first URL segment
+    if (isset($url[0]) && file_exists('../app/controllers/' . ucwords($url[0]) . '.php')) {
+      // if file exists, set it as the controller
+      $this->currentController = ucwords($url[0]);
+      // unset 0 index
+      unset($url[0]);
+    }
+
+    // Require the controller
+    require_once '../app/controllers/' . $this->currentController . '.php';
+
+    // Instantiate the controller class
+    $this->currentController = new $this->currentController;
+  }
+```
