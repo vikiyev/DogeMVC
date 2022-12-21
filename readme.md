@@ -164,8 +164,16 @@ class Controller {
 }
 ```
 
-We can then try loading the view in our controller classes by extending the Controller class.
+We can then try loading the view in `views/pages/index.php` in our controller classes by extending the Controller class. We can also pass an optional argument from our controller to the view an array of parameters, which is accessible in the view using the $data property.
 
 ```php
+class Pages extends Controller {
+  public function index() {
+    $this->view('pages/index', ['title' => 'Welcome!']);
+  }
+}
+```
 
+```php
+<h1><?php echo $data['title'] ?></h1>
 ```
