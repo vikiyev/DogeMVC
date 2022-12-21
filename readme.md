@@ -1,5 +1,7 @@
 # DogeMVC
 
+Using query parameters, we can control which controllers and methods are loaded.
+
 ## MVC Pattern
 
 Model
