@@ -2,6 +2,15 @@
 
 class Pages {
   public function __construct() {
-    echo 'Pages loaded';
+    
+  }
+
+  public function index() {
+    echo 'Index';
+  }
+
+  public function about ($id){
+    echo 'About is loaded! <br>';
+    echo $id;
   }
 }

@@ -106,3 +106,33 @@ To load the controller, we can check if the controller file exists and if it doe
     $this->currentController = new $this->currentController;
   }
 ```
+
+## Mapping Methods and Parameters
+
+We can check if a method exists in a controller using **method_exists()**. The **call_user_func_array()** method calls a callback with an array of parameters
+
+```php
+    // Check for second URL segment (method)
+    if (isset($url[1])) {
+      // check to see if method exists for the controller
+      if (method_exists($this->currentController, $url[1])) {
+        $this->currentMethod = $url[1];
+        unset($url[1]);
+      }
+    }
+
+    // Get params
+    $this->params = $url ? array_values($url) : [];
+    call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
+```
+
+This now actually calls the parameter wherein we can access the parameters. We will see 33 being outputted when visiting `http://localhost/dogemvc/pages/about/33`.
+
+```php
+class Pages {
+  public function about ($id) {
+    echo 'About is loaded! <br>';
+    echo $id;
+  }
+}
+```
