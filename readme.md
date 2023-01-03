@@ -177,3 +177,119 @@ class Pages extends Controller {
 ```php
 <h1><?php echo $data['title'] ?></h1>
 ```
+
+## Interacting with the Database
+
+To interact with the Database, we use a PDO.
+
+```php
+  class Database {
+    private $host = DB_HOST;
+    private $user = DB_USER;
+    private $pass = DB_PASS;
+    private $dbname = DB_NAME;
+
+    private $dbhandler;
+    private $stmt;
+    private $error;
+
+    public function __construct()
+    {
+      // Set DSN
+      $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname;
+      $options = array(
+        PDO::ATTR_PERSISTENT => true,
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+      );
+
+      // Create PDO instance
+      try {
+        $this->dbhandler = new PDO($dsn, $this->user, $this->pass, $options);
+      } catch (PDOException $e) {
+        $this->error = $e->getMessage();
+        echo $this->error;
+      }
+    }
+
+    // Prepare statement with query
+    public function query($sql) {
+      $this->stmt = $this->dbhandler->prepare($sql);
+    }
+
+    // Bind the values
+    public function bind($param, $value, $type=null) {
+      if (is_null($type)) {
+        switch(true) {
+          case is_int($value):
+            $type = PDO::PARAM_INT;
+            break;
+          case is_bool($value):
+            $type = PDO::PARAM_BOOL;
+            break;
+          case is_null($value):
+            $type = PDO::PARAM_NULL;
+            break;
+          default:
+            $type = PDO::PARAM_STR;
+        }
+      }
+
+      $this->stmt->bindValue($param, $value, $type);
+    }
+
+    // Execute the prepared statement
+    public function execute() {
+      return $this->stmt->execute();
+    }
+  }
+```
+
+We can use a model to test the PDO.
+
+```php
+  class Post {
+    private $db;
+
+    public function __construct() {
+      // Instantiate db
+      $this->db = new Database;
+    }
+
+    public function getPosts() {
+      $this->db->query("SELECT * FROM posts");
+      $results = $this->db->resultSet();
+      return $results;
+    }
+  }
+```
+
+We need to include the model in our controller class
+
+```php
+class Pages extends Controller {
+  public function __construct() {
+    $this->postModel = $this->model('Post');
+  }
+
+  public function index() {
+    $posts = $this->postModel->getPosts();
+    $data = [
+      'title' => 'Welcome!',
+      'posts' => $posts
+  ];
+    $this->view('pages/index', $data);
+  }
+}
+```
+
+We can then fetch the data from our index view
+
+```php
+<ul>
+  <?php foreach($data['posts'] as $post) : ?>
+    <li><?php echo $post->title; ?></li>
+  <?php endforeach; ?>
+</ul>
+```
+
+This way, we are able to load a model through our controller, call a model function to set a variable to be passed into the view.
