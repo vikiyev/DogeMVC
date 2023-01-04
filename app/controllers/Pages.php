@@ -10,14 +10,18 @@ class Pages extends Controller {
   public function index() {
     // $posts = $this->postModel->getPosts();
     $data = [
-      'title' => 'Welcome!', 
+      'title' => 'DogeMVC', 
+      'description' => 'Socialize with Doges. Built with PHP.'
       // 'posts' => $posts
   ];
     $this->view('pages/index', $data);
   }
 
   public function about (){
-    $data = ['title' => 'About Us'];
+    $data = [
+      'title' => 'About Us',
+      'description' => 'An app for sharing posts with other doges'
+    ];
     $this->view('pages/about', $data);
   }
 }
