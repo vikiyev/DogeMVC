@@ -296,7 +296,7 @@ This way, we are able to load a model through our controller, call a model funct
 
 ## Authentication
 
-For Authentication, we create a new controller for Users.php with methods for register and login. This will load the corresponding view.
+For Authentication, we create a new controller for Users.php with methods for register and login. The method checks for the request type and performs validations and checks accordingly.
 
 ```php
 class Users extends Controller {
@@ -304,7 +304,58 @@ class Users extends Controller {
     // check for request type
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       // process the form submitted
+      // sanitize POST data
+      $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+
+      // initialize data
+      $data = [
+        'name'=> trim($_POST['name']),
+        'email'=> trim($_POST['email']),
+        'password' => trim($_POST['password']),
+        'confirm_password' => trim($_POST['confirm_password']),
+        'name_err'=>'',
+        'email_err'=>'',
+        'password_err'=>'',
+        'confirm_password_err'=>''
+      ];
+
+      // validation
+      if (empty($data['email'])) {
+        $data['email_err'] = 'Please enter email';
+      }
+
+      if (empty($data['name'])) {
+        $data['name_err'] = 'Please enter name';
+      }
+
+      if (empty($data['password'])) {
+        $data['password_err'] = 'Please enter password';
+      } elseif(strlen($data['password']) < 6) {
+        $data['password_err'] = 'Password must be at least 6 characters';
+      }
+
+      if (empty($data['confirm_password'])) {
+        $data['confirm_password_err'] = 'Please confirm password';
+      } else {
+        if ($data['password'] != $data['confirm_password']) {
+          $data['confirm_password_err'] = 'Passwords do not match';
+        }
+      }
+
+      // make sure that there are no errors
+      if (empty($data['email_err']) &&
+        empty($data['name_err']) &&
+        empty($data['password_err']) &&
+        empty($data['confirm_password_err'])) {
+        // valid form
+        die('SUCCESS');
+      } else {
+        // reload the view with errors
+        $this->view('users/register', $data);
+      }
+
     } else {
+      // GET request
       // initialize data
       $data = [
         'name'=> '',
@@ -319,24 +370,6 @@ class Users extends Controller {
 
       // load view
       $this->view('users/register', $data);
-    }
-  }
-
-  public function login() {
-    // check for request type
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-      // process the form submitted
-    } else {
-      // initialize data
-      $data = [
-        'email'=> '',
-        'password' => '',
-        'email_err'=>'',
-        'password_err'=>''
-      ];
-
-      // load view
-      $this->view('users/login', $data);
     }
   }
 }
