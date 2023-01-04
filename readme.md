@@ -293,3 +293,51 @@ We can then fetch the data from our index view
 ```
 
 This way, we are able to load a model through our controller, call a model function to set a variable to be passed into the view.
+
+## Authentication
+
+For Authentication, we create a new controller for Users.php with methods for register and login. This will load the corresponding view.
+
+```php
+class Users extends Controller {
+  public function register() {
+    // check for request type
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+      // process the form submitted
+    } else {
+      // initialize data
+      $data = [
+        'name'=> '',
+        'email'=> '',
+        'password' => '',
+        'confirm_password' => '',
+        'name_err'=>'',
+        'email_err'=>'',
+        'password_err'=>'',
+        'confirm_password_err'=>''
+      ];
+
+      // load view
+      $this->view('users/register', $data);
+    }
+  }
+
+  public function login() {
+    // check for request type
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+      // process the form submitted
+    } else {
+      // initialize data
+      $data = [
+        'email'=> '',
+        'password' => '',
+        'email_err'=>'',
+        'password_err'=>''
+      ];
+
+      // load view
+      $this->view('users/login', $data);
+    }
+  }
+}
+```
