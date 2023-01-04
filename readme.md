@@ -514,3 +514,98 @@ And on our view
 ```php
 <?php flash('register_success'); ?>
 ```
+
+## Login
+
+To login a user, we can create a new model method.
+
+```php
+  public function login($email, $password) {
+    $this->db->query("SELECT * FROM users WHERE email = :email");
+    $this->db->bind(':email', $email);
+
+    $row = $this->db->single();
+    $hashed_password = $row->password;
+
+    // verify and match if password matches hashed password from db
+    if (password_verify($password, $hashed_password)) {
+      return $row;
+    } else {
+      return false;
+    }
+  }
+```
+
+We then have to verify in the controller if the user email exists and if there are no form errors before calling the model function for logging in.
+
+```php
+      // check for user/email
+      if ($this->userModel->findUserByEmail($data['email'])) {
+        // user found
+      } else {
+        $data['email_err'] = 'No user found';
+      }
+
+      // make sure that there are no errors
+      if (empty($data['email_err']) &&
+        empty($data['password_err'])) {
+        // valid form
+        // check and set logged in user
+        $loggedInUser = $this->userModel->login($data['email'], $data['password']);
+
+        if ($loggedInUser) {
+          // create the session
+          $this->createUserSession($loggedInUser);
+        } else {
+          // rerender form with an error
+          $data['password_err'] = 'Password incorrect';
+          $this->view('users/login', $data);
+        };
+      }
+```
+
+We can then create the session
+
+```php
+  public function createUserSession($user) {
+    $_SESSION['user_id'] = $user->id;
+    $_SESSION['user_email'] = $user->email;
+    $_SESSION['user_name'] = $user->name;
+    redirect('pages/index');
+  }
+```
+
+## Logout
+
+In the navbar, we can create a conditional for rendering the logout button based on the session.
+
+```php
+        <!-- login and register buttons -->
+        <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+
+          <?php if(isset($_SESSION['user_id'])) : ?>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="<?php echo URLROOT ?>/users/logout">Logout</a>
+          </li>
+          <?php else : ?>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="<?php echo URLROOT ?>/users/register">Register</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="<?php echo URLROOT ?>/users/login">Login</a>
+          </li>
+          <?php endif; ?>
+        </ul>
+```
+
+We need to add the logout method on our Users controller wherein we unset the session.
+
+```php
+  public function logout() {
+    unset($_SESSION['user_id']);
+    unset($_SESSION['user_email']);
+    unset($_SESSION['user_name']);
+    session_destroy();
+    redirect('users/login');
+  }
+```
