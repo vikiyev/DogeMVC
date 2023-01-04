@@ -60,7 +60,16 @@ class Users extends Controller {
         empty($data['password_err']) &&
         empty($data['confirm_password_err'])) {
         // valid form
-        die('SUCCESS');
+        // hash the password
+        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        // register the user
+        if ($this->userModel->register($data)) {
+          // redirect to login page
+          redirect('users/login');
+        } else {
+          die('Something went wrong');
+        }
+
       } else {
         // reload the view with errors
         $this->view('users/register', $data);

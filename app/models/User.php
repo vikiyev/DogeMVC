@@ -23,4 +23,21 @@ class User {
       return false;
     }
   }
+
+  // register the user
+  public function register($data) {
+    // prepare the SQL statement
+    $this->db->query("INSERT INTO users (name, email, password) VALUES(:name, :email, :password)");
+    // bind values
+    $this->db->bind(':name', $data['name']);
+    $this->db->bind(':email', $data['email']);
+    $this->db->bind(':password', $data['password']);
+
+    // execute the query
+    if ($this->db->execute()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

@@ -425,3 +425,44 @@ We can then add the functionality for checking if an email already exists in the
 ```
 
 ## User Registration
+
+To register, we need to create a new method in our model class
+
+```php
+  // register the user
+  public function register($data) {
+    // prepare the SQL statement
+    $this->db->query("INSERT INTO users (name, email, password) VALUES(:name, :email, :password)");
+    // bind values
+    $this->db->bind(':name', $data['name']);
+    $this->db->bind(':email', $data['email']);
+    $this->db->bind(':password', $data['password']);
+
+    // execute the query
+    if ($this->db->execute()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+```
+
+In the controller, we can now call this method. We can also hash the password using **password_hash()**
+
+```php
+      // make sure that there are no errors
+      if (empty($data['email_err']) &&
+        empty($data['name_err']) &&
+        empty($data['password_err']) &&
+        empty($data['confirm_password_err'])) {
+        // valid form
+        // hash the password
+        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        // register the user
+        if ($this->userModel->register($data)) {
+          // redirect to login page
+          redirect('users/login');
+        } else {
+          die('Something went wrong');
+        }
+```
