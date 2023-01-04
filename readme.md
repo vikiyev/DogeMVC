@@ -300,6 +300,12 @@ For Authentication, we create a new controller for Users.php with methods for re
 
 ```php
 class Users extends Controller {
+  private $userModel;
+
+  public function __construct() {
+    $this->userModel = $this->model('User');
+  }
+
   public function register() {
     // check for request type
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -374,3 +380,48 @@ class Users extends Controller {
   }
 }
 ```
+
+We also create a User.php model file wherein we reach into the database using the Database.php library we created.
+
+```php
+class User {
+  private $db;
+
+  public function __construct() {
+    // Instantiate db
+    $this->db = new Database;
+  }
+
+  // find user by email
+  public function findUserByEmail($email) {
+    $this->db->query("SELECT * FROM users WHERE email = :email");
+    // bind the value to the email
+    $this->db->bind(':email', $email);
+
+    // return the data
+    $row = $this->db->single();
+    // check the row if email exists
+    if ($this->db->rowCount() > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+```
+
+We can then add the functionality for checking if an email already exists in the database on our controller class.
+
+```php
+      // validation
+      if (empty($data['email'])) {
+        $data['email_err'] = 'Please enter email';
+      } else {
+        // check if email is taken
+        if ($this->userModel->findUserByEmail($data['email'])) {
+          $data['email_err'] = 'Email is already taken';
+        }
+      }
+```
+
+## User Registration
