@@ -883,3 +883,26 @@ And then the model method for updatePost.
       }
     }
 ```
+
+## Deployment
+
+1. Create MySQL using Cpanel wizard
+2. Import database from local machine using phpMyAdmin
+3. Update .htaccess
+
+```
+RewriteBase /public
+```
+
+4. Update config.php
+
+```php
+  define('DB_HOST', 'localhost');
+  define('DB_USER', 'USER_NAME');
+  define('DB_PASS', 'USER_PASS');
+  define('DB_NAME', 'DB_NAME');
+  // URL root
+  define('URLROOT', 'http://SITE_NAME');
+```
+
+5. Upload using FTP client to public_html directory
