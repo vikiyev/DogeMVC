@@ -1,6 +1,40 @@
 # DogeMVC
 
-Using query parameters, we can control which controllers and methods are loaded.
+An MVC framework based on Brad Traversy's course [Object Oriented PHP & MVC](https://www.udemy.com/course/object-oriented-php-mvc/). Built completely with PHP from scratch, without use of any external libraries/frameworks.
+
+The DogeMVC framework uses the MVC pattern in such a way that the URL's entered calls a controller method which loads a view or processes forms. The project uses a base controller class (Controller.php) which all other controllers extends to load models and views. The framework interacts with the database using PDO's through a helper class (Database.php).
+
+Some of the functionalities of the app built on top of the DogeMVC framework are:
+
+- User registration and authentication
+- Route guards
+- Full CRUD functionality for posts
+- Helper methods for redirects and flash messages
+- Server side form validation
+
+- [DogeMVC](#dogemvc)
+- [Certificate of Completion](#certificate-of-completion)
+  - [MVC Pattern](#mvc-pattern)
+  - [Directing to index.php](#directing-to-indexphp)
+  - [Boostrapping and Initializing the Core Class](#boostrapping-and-initializing-the-core-class)
+  - [Loading the Controller](#loading-the-controller)
+  - [Mapping Methods and Parameters](#mapping-methods-and-parameters)
+  - [Base Controller](#base-controller)
+  - [Interacting with the Database](#interacting-with-the-database)
+  - [Authentication](#authentication)
+  - [User Registration](#user-registration)
+  - [Flash Messaging](#flash-messaging)
+  - [Login](#login)
+  - [Logout](#logout)
+  - [Posts Functionality](#posts-functionality)
+  - [Adding Posts](#adding-posts)
+  - [Post Details](#post-details)
+  - [Edit Posts](#edit-posts)
+  - [Deployment](#deployment)
+
+# Certificate of Completion
+
+![Completion](UC-6e4c9d81-99d7-460f-a9a5-2fa1fbc9ef3d.jpg)
 
 ## MVC Pattern
 
@@ -792,7 +826,7 @@ We can create a method in our Post controller that takes in the post id. We also
   }
 ```
 
-## Edit and Delete
+## Edit Posts
 
 To conditionally render the edit button, we can compare the user_id from the session user_id.
 
