@@ -12,7 +12,11 @@
 
 <?php if($data['post']->user_id == $_SESSION['user_id']) : ?>
   <hr>
-  <a href="<?php echo URLROOT ?>/posts/edit<?php echo $data['post']->id ?>" class="btn btn-dark">Edit</a>
+  <a href="<?php echo URLROOT; ?>/posts/edit/<?php echo $data['post']->id; ?>" class="btn btn-dark">Edit</a>
+
+  <form action="<?php echo URLROOT ?>/posts/delete/<?php echo $data['post']->id ?>" method="POST">
+    <input type="submit" value="Delete" class="btn btn-danger float-end">
+  </form>
 <?php endif; ?>
 
 <?php require APPROOT . '/views/inc/footer.php'; ?>

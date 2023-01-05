@@ -791,3 +791,97 @@ We can create a method in our Post controller that takes in the post id. We also
     $this->view('posts/show', $data);
   }
 ```
+
+## Edit and Delete
+
+To conditionally render the edit button, we can compare the user_id from the session user_id.
+
+```php
+<?php if($data['post']->user_id == $_SESSION['user_id']) : ?>
+  <hr>
+  <a href="<?php echo URLROOT ?>/posts/edit<?php echo $data['post']->id ?>" class="btn btn-dark">Edit</a>
+
+  <form action="<?php echo URLROOT ?>/posts/delete/<?php echo $data['post']->id ?>" method="POST">
+    <input type="submit" value="Delete" class="btn btn-danger pull-right">
+  </form>
+<?php endif; ?>
+```
+
+We then create the controller method.
+
+```php
+  public function edit($id) {
+    // check request if POST
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+      // sanitize POST array
+      $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+      $data = [
+        'id' => $id,
+        'title'=> trim($_POST['title']),
+        'body'=> trim($_POST['body']),
+        'user_id'=> $_SESSION['user_id'],
+        'title_err'=> '',
+        'body_err'=> ''
+      ];
+
+      // validation
+      if(empty($data['title'])) {
+        $data['title_err'] = 'Please enter a title';
+      }
+
+      if(empty($data['body'])) {
+        $data['body_err'] = 'Please enter body text';
+      }
+
+      // make sure there are no errors
+      if (empty($data['title_err']) && empty($data['body_err'])) {
+        // validated
+        if ($this->postModel->udpatePost($data)) {
+          flash('post_message', 'Post has been updated.');
+          redirect('posts');
+        } else {
+          die('Something went wrong');
+        }
+
+      } else {
+        // rerender view with errors
+        $this->view('posts/edit', $data);
+      }
+
+    } else {
+      // fetch the post
+      $post = $this->postModel->getPostById($id);
+
+      // check if user is the owner
+      if ($post->user_id != $_SESSION['user_id']) {
+        redirect('posts');
+      }
+
+      $data = [
+        'id' => $id,
+        'title'=> $post->title,
+        'body'=> $post->body
+      ];
+      $this->view('posts/edit', $data);
+    }
+  }
+```
+
+And then the model method for updatePost.
+
+```php
+    public function updatePost($data) {
+      $this->db->query("UPDATE posts SET title = :title, body = :body WHERE id = :id");
+      $this->db->bind(':title', $data['title']);
+      $this->db->bind(':body', $data['body']);
+      $this->db->bind(':id', $data['id']);
+
+      if ($this->db->execute()) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+```
+
+## Deleting Post
