@@ -609,3 +609,38 @@ We need to add the logout method on our Users controller wherein we unset the se
     redirect('users/login');
   }
 ```
+
+## Posts Functionality
+
+We first create a controller for the posts. We can also set up route guards to prevent users that are not logged in from accessing the posts endpoint. We can check if a session exists in the constructor and redirect if there are none.
+
+```php
+class Posts extends Controller {
+  public function __construct()
+  {
+    if (!isLoggedIn()) {
+      redirect('users/login');
+    }
+  }
+
+  public function index() {
+    $data = [];
+    $this->view('posts/index', $data);
+  }
+}
+```
+
+We can use a helper function for checking if a user is logged in.
+
+```php
+  function isLoggedIn() {
+    if (isset($_SESSION['user_id'])) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+```
+
+To fetch the posts, we need to create a post model and create a method to reach into the database.

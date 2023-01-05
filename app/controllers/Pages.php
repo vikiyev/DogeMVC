@@ -11,7 +11,7 @@ class Pages extends Controller {
     // $posts = $this->postModel->getPosts();
     $data = [
       'title' => 'DogeMVC', 
-      'description' => 'Socialize with Doges. Built with PHP.'
+      'description' => 'Wow, such Doge! Much PHP. Very MVC.'
       // 'posts' => $posts
   ];
     $this->view('pages/index', $data);
