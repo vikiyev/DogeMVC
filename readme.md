@@ -36,6 +36,11 @@ Some of the functionalities of the app built on top of the DogeMVC framework are
 
 ![Completion](UC-6e4c9d81-99d7-460f-a9a5-2fa1fbc9ef3d.jpg)
 
+# Setting up Locally
+
+1. Install XAMPP
+2. Clone the repository to C:/xampp/htdocs
+
 ## MVC Pattern
 
 Model
