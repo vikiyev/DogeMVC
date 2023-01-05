@@ -883,5 +883,3 @@ And then the model method for updatePost.
       }
     }
 ```
-
-## Deleting Post
