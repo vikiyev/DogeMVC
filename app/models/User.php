@@ -24,6 +24,13 @@ class User {
     }
   }
 
+  public function getUserById($id) {
+    $this->db->query("SELECT * FROM users WHERE id = :id");
+    $this->db->bind(':id', $id);
+    $row = $this->db->single();
+    return $row;
+  }
+
   // register the user
   public function register($data) {
     // prepare the SQL statement

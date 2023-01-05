@@ -762,3 +762,32 @@ We also need to create a corresponding method in the Post model.
       }
     }
 ```
+
+## Post Details
+
+We can create a method in our Post controller that takes in the post id. We also neeed to create a model method for getting a single post.
+
+```php
+    public function getPostById($id) {
+      // prepare the SQL statement
+      $this->db->query("SELECT * FROM posts WHERE id = :id");
+      // bind values
+      $this->db->bind(':id', $id);
+
+      $row = $this->db->single();
+      return $row;
+    }
+```
+
+```php
+  public function show($id) {
+    $post = $this->postModel->getPostById($id);
+    $user = $this->userModel->getUserById($post->user_id);
+
+    $data = [
+      'post' => $post,
+      'user' => $user
+    ];
+    $this->view('posts/show', $data);
+  }
+```
