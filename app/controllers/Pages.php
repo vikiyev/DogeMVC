@@ -8,7 +8,11 @@ class Pages extends Controller {
   }
 
   public function index() {
-    // $posts = $this->postModel->getPosts();
+    if (isLoggedIn()) {
+      redirect('posts');
+    }
+
+
     $data = [
       'title' => 'DogeMVC', 
       'description' => 'Wow, such Doge! Much PHP. Very MVC.'
